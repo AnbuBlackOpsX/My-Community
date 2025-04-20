@@ -1,13 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Community</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Posts</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+    #postForm { margin-bottom: 20px; }
+    textarea { width: 100%; padding: 10px; margin-bottom: 10px; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; }
+    .post { background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>My Posts</h1>
+  <form id="postForm">
+    <textarea id="textInput" placeholder="Write something..."></textarea>
+    <button type="submit">Post</button>
+  </form>
+
+  <div id="postsContainer"></div>
+
+  <script>
+    const postForm = document.getElementById('postForm');
+    const textInput = document.getElementById('textInput');
+    const postsContainer = document.getElementById('postsContainer');
+
+    // Load saved posts
+    window.onload = () => {
+      const saved = JSON.parse(localStorage.getItem('myposts') || '[]');
+      saved.forEach(addPostToUI);
+    };
+
+    postForm.onsubmit = (e) => {
+      e.preventDefault();
+      const text = textInput.value.trim();
+      if (!text) return;
+      const post = { id: Date.now(), text };
+      addPostToUI(post);
+      savePost(post);
+      textInput.value = '';
+    };
+
+    function addPostToUI(post) {
+      const div = document.createElement('div');
+      div.className = 'post';
+      div.textContent = post.text;
+      postsContainer.prepend(div);
+    }
+
+    function savePost(post) {
+      const all = JSON.parse(localStorage.getItem('myposts') || '[]');
+      all.push(post);
+      localStorage.setItem('myposts', JSON.stringify(all));
+    }
+  </script>
+</body>
 </html>
